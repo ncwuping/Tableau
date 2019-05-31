@@ -13,7 +13,7 @@ ENV TABLEAU_VERSION="2018.3.7" \
 # make systemd dbus visible 
 VOLUME /sys/fs/cgroup /run /tmp
 
-COPY config/lscpu /bin
+COPY config/lscpu /usr/bin/
 
 # Install core bits and their deps:w
 RUN yum clean all -y && yum makecache fast && yum update -y; \
@@ -31,6 +31,7 @@ RUN yum clean all -y && yum makecache fast && yum update -y; \
  && (echo tsm:tsm | chpasswd) \
  && (echo 'tsm ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/tsm) \
  && mkdir -p /run/systemd/system /opt/tableau/docker_build \
+ && chmod +x /usr/bin/lscpu \
  && yum install -y \
              "https://downloads.tableau.com/esdalt/${TABLEAU_VERSION}/tableau-server-${TABLEAU_VERSION//\./-}.x86_64.rpm" \
              "https://downloads.tableau.com/drivers/linux/yum/tableau-driver/tableau-postgresql-odbc-9.5.3-1.x86_64.rpm" \
@@ -39,7 +40,8 @@ RUN yum clean all -y && yum makecache fast && yum update -y; \
 
 COPY config/* /opt/tableau/docker_build/
 
-RUN mkdir -p /etc/systemd/system/ \
+RUN chmod +x /opt/tableau/docker_build/tableau-init-configure.sh \
+ && mkdir -p /etc/systemd/system/ \
  && cp /opt/tableau/docker_build/tableau_server_install.service /etc/systemd/system/ \
  && systemctl enable tableau_server_install 
 

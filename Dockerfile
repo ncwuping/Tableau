@@ -11,7 +11,7 @@ ENV TABLEAU_VERSION="2018.3.7" \
     LANG=en_US.UTF-8
 
 # make systemd dbus visible 
-VOLUME /sys/fs/cgroup /run /tmp
+VOLUME /sys/fs/cgroup /run /tmp /var/opt/tableau
 
 COPY config/lscpu /usr/bin/
 
